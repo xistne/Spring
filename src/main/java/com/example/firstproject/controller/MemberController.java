@@ -34,14 +34,14 @@ public class MemberController {
         Member member = form.toEntity();
 //        System.out.println(member.toString());
         log.info(member.toString());
-        Member saved =memberRepository.save(member);
+        Member saved = memberRepository.save(member);
 //        System.out.println(saved.toString());
         log.info(saved.toString());
         return "redirect:/members/" + saved.getId();
     }
     @GetMapping("members/{id}")
     public String show(@PathVariable Long id, Model model) {
-        Member memberEntity= memberRepository.findById(id).orElse(null);
+        Member memberEntity = memberRepository.findById(id).orElse(null);
         model.addAttribute("member", memberEntity);
         return "members/show";
     }
@@ -50,5 +50,20 @@ public class MemberController {
         ArrayList<Member> memberList = memberRepository.findAll();
         model.addAttribute("memberList", memberList);
         return "/members/index";
+    }
+    @GetMapping("/members/{id}/edit")
+    public String edit(@PathVariable Long id, Model model) {
+        Member memberEntity = memberRepository.findById(id).orElse(null);
+        model.addAttribute("member",memberEntity);
+        return "members/edit";
+    }
+    @PostMapping("/members/update")
+    public String update(MemberForm form) {
+        Member memberEntity = form.toEntity();
+        Member target = memberRepository.findById(memberEntity.getId()).orElse(null);
+        if(target != null) {
+            memberRepository.save(memberEntity);
+        }
+        return "redirect:/members/" + memberEntity.getId();
     }
 }
